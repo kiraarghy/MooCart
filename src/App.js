@@ -12,12 +12,13 @@ class DisplayProducts extends React.Component {
       <div>
         <div>{this.props.title}</div>
         <div>{this.props.price}</div>
-        <button onClick={e => this.props.handleAddToCart(e, this.props.id)} />
+        <button onClick={e => this.props.handleAddToCart(e, this.props.id)}>
+          Add to Cart
+        </button>
       </div>
     );
   }
 }
-
 class DisplayContainer extends React.Component {
   render() {
     var renderedProductList = this.props.products.map(
@@ -41,7 +42,7 @@ class MooCheckout extends React.Component {
   state = {
     products: []
   };
-
+//data validation please
   componentDidMount() {
     this.setState({
       products: [
@@ -71,6 +72,8 @@ class MooCheckout extends React.Component {
   }
 
   //Array returned is in different order than before, maybe look at changing this but doesn't affect function atm?
+  //as we're using id as key and id is unique
+  //sort spreadAllOtherProducts by id before settingstate
   handleAddToCart = (e, id) => {
     let selectedProducts = this.state.products.find(
       product => product.id === id

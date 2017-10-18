@@ -12,6 +12,7 @@ class DisplayProducts extends React.Component {
       <div>
         <div>{this.props.title}</div>
         <div>{this.props.price}</div>
+        <button onClick={e => this.props.handleAddToCart(e, this.props.id)} />
       </div>
     );
   }
@@ -19,15 +20,19 @@ class DisplayProducts extends React.Component {
 
 class DisplayContainer extends React.Component {
   render() {
-    var renderedProductList = this.props.products.map((product, key=this.props.products.id) => {
-      return (
-        <DisplayProducts
-          title={product.title}
-          price={product.price}
-          key={product.id}
-        />
-      );
-    });
+    var renderedProductList = this.props.products.map(
+      (product, key = this.props.products.id) => {
+        return (
+          <DisplayProducts
+            title={product.title}
+            price={product.price}
+            key={product.id}
+            id={product.id}
+            handleAddToCart={this.props.handleAddToCart}
+          />
+        );
+      }
+    );
     return <div>{renderedProductList}</div>;
   }
 }
@@ -65,15 +70,33 @@ class MooCheckout extends React.Component {
     });
   }
 
+  //Array returned is in different order than before, maybe look at changing this but doesn't affect function atm?
+  handleAddToCart = (e, id) => {
+    let selectedProducts = this.state.products.find(
+      product => product.id === id
+    );
+
+    selectedProducts.quantity += 1;
+    selectedProducts.inBasket = true;
+
+    let allOtherProducts = this.state.products.filter(
+      product => product.id !== id
+    );
+
+    let spreadAllOtherProducts = [...allOtherProducts, selectedProducts];
+    this.setState({
+      products: spreadAllOtherProducts
+    });
+  };
+
   render() {
     return (
       <div className="App">
         <DisplayContainer
           products={this.state.products}
+          handleAddToCart={this.handleAddToCart}
         />
-        <BasketContainer
-          products={this.state.products}
-        />
+        <BasketContainer products={this.state.products} />
       </div>
     );
   }

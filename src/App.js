@@ -1,10 +1,37 @@
 import React from "react";
+import PropTypes from "prop-types";
+
+//DisplayBasketProducts provides a displayof the individual products as well as
+//+quanity and -quantity buttons
+
+class DisplayBasketProducts extends React.Component {
+  render () {
+    return (<div> </div>)
+  }
+}
+
+//BasketContainer contains all the Basket components
 
 class BasketContainer extends React.Component {
   render() {
-    return <div />;
+    var basketProductList = this.props.products.map(
+      (product, key = this.props.products.id) => {
+        return (
+          <DisplayBasketProducts
+            title={product.title}
+            price={product.price}
+            quantity={product.quantity}
+            key={product.id}
+            id={product.id}
+          />
+        );
+      }
+    );
+    return <div>{basketProductList}</div>;
   }
 }
+
+//DisplayProducts provides a re-usable component to display all the products
 
 class DisplayProducts extends React.Component {
   render() {
@@ -12,16 +39,26 @@ class DisplayProducts extends React.Component {
       <div>
         <div>{this.props.title}</div>
         <div>{this.props.price}</div>
-        <button onClick={e => this.props.handleAddToCart(e, this.props.id)}>
+        <button onClick={e => this.props.handleIncrementQuanity(e, this.props.id)}>
           Add to Cart
         </button>
       </div>
     );
   }
 }
+
+DisplayProducts.propTypes = {
+  title: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
+  handleIncrementQuanity: PropTypes.func.isRequired
+};
+
+//DisplayContainer provides a container for the products available
+
 class DisplayContainer extends React.Component {
   render() {
-    var renderedProductList = this.props.products.map(
+    var ProductList = this.props.products.map(
       (product, key = this.props.products.id) => {
         return (
           <DisplayProducts
@@ -29,20 +66,24 @@ class DisplayContainer extends React.Component {
             price={product.price}
             key={product.id}
             id={product.id}
-            handleAddToCart={this.props.handleAddToCart}
+            handleIncrementQuanity={this.props.handleIncrementQuanity}
           />
         );
       }
     );
-    return <div>{renderedProductList}</div>;
+    return <div>{ProductList}</div>;
   }
 }
+
+DisplayContainer.propTypes = {
+  products: PropTypes.arrayOf(PropTypes.object).isRequired,
+  handleIncrementQuanity: PropTypes.func.isRequired
+};
 
 class MooCheckout extends React.Component {
   state = {
     products: []
   };
-//data validation please
   componentDidMount() {
     this.setState({
       products: [
@@ -71,33 +112,45 @@ class MooCheckout extends React.Component {
     });
   }
 
-  //Array returned is in different order than before, maybe look at changing this but doesn't affect function atm?
-  //as we're using id as key and id is unique
-  //sort spreadAllOtherProducts by id before settingstate
-  handleAddToCart = (e, id) => {
+  //will increase quanity of the product
+
+  handleIncrementQuanity = (e, id) => {
     let selectedProducts = this.state.products.find(
       product => product.id === id
     );
 
     selectedProducts.quantity += 1;
-    selectedProducts.inBasket = true;
 
     let allOtherProducts = this.state.products.filter(
       product => product.id !== id
     );
 
     let spreadAllOtherProducts = [...allOtherProducts, selectedProducts];
+
+    let sortedSpreadAllOtherProducts = spreadAllOtherProducts.sort(function(
+      a,
+      b
+    ) {
+      return a.id > b.id ? 1 : b.id > a.id ? -1 : 0;
+    });
     this.setState({
-      products: spreadAllOtherProducts
+      products: sortedSpreadAllOtherProducts
     });
   };
+
+  //will increase quanity of the product
+
+  //will decrease quantity of the product
+  //note it would be good if we could check the product quantity, if quantity = 0, update quantity to 0?
+
+  handleDecrementQuanity = (e, id) => {};
 
   render() {
     return (
       <div className="App">
         <DisplayContainer
           products={this.state.products}
-          handleAddToCart={this.handleAddToCart}
+          handleIncrementQuanity={this.handleIncrementQuanity}
         />
         <BasketContainer products={this.state.products} />
       </div>

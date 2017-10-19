@@ -1,10 +1,13 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 class BasketContainer extends React.Component {
   render() {
     return <div />;
   }
 }
+
+//DisplayProducts provides a re-usable component to display all the products
 
 class DisplayProducts extends React.Component {
   render() {
@@ -19,6 +22,16 @@ class DisplayProducts extends React.Component {
     );
   }
 }
+
+DisplayProducts.propTypes = {
+  title: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
+  handleAddToCart: PropTypes.func.isRequired
+};
+
+//DisplayContainer provides a container for the products available
+
 class DisplayContainer extends React.Component {
   render() {
     var renderedProductList = this.props.products.map(
@@ -38,11 +51,15 @@ class DisplayContainer extends React.Component {
   }
 }
 
+DisplayContainer.propTypes = {
+  products: PropTypes.arrayOf(PropTypes.object).isRequired,
+  handleAddToCart: PropTypes.func.isRequired
+};
+
 class MooCheckout extends React.Component {
   state = {
     products: []
   };
-//data validation please
   componentDidMount() {
     this.setState({
       products: [
@@ -71,9 +88,8 @@ class MooCheckout extends React.Component {
     });
   }
 
-  //Array returned is in different order than before, maybe look at changing this but doesn't affect function atm?
-  //as we're using id as key and id is unique
-  //sort spreadAllOtherProducts by id before settingstate
+  //handleAddToCart adds to the quantity of product matching that id in the cart
+
   handleAddToCart = (e, id) => {
     let selectedProducts = this.state.products.find(
       product => product.id === id
@@ -87,8 +103,15 @@ class MooCheckout extends React.Component {
     );
 
     let spreadAllOtherProducts = [...allOtherProducts, selectedProducts];
+
+    let sortedSpreadAllOtherProducts = spreadAllOtherProducts.sort(function(
+      a,
+      b
+    ) {
+      return a.id > b.id ? 1 : b.id > a.id ? -1 : 0;
+    });
     this.setState({
-      products: spreadAllOtherProducts
+      products: sortedSpreadAllOtherProducts
     });
   };
 

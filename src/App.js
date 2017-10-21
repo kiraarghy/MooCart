@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 
 class DisplayBasketProducts extends React.Component {
   render() {
-    return <div> </div>;
+    return <div> BARTS</div>;
   }
 }
 
@@ -14,11 +14,13 @@ class DisplayBasketProducts extends React.Component {
 
 class BasketContainer extends React.Component {
   render() {
+    let inBasket = this.props.products.filter(product => product.quantity > 0);
+    console.log(inBasket)
     const round = (value, decimals) => {
       return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
     };
-    const basketProductList = this.props.products.map(
-      (product, key = this.props.products.id) => {
+    const basketProductList = inBasket.map(
+      (product, key = inBasket.id) => {
         return (
           <DisplayBasketProducts
             title={product.title}

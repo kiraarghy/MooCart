@@ -6,7 +6,28 @@ import PropTypes from "prop-types";
 
 class DisplayBasketProducts extends React.Component {
   render() {
-    return <div> BARTS</div>;
+    return (
+      <div>
+        <div>{this.props.title}</div>
+        <div>Cost: £{this.props.price}</div>
+        <button
+          onClick={e => this.props.handleIncrementQuanity(e, this.props.id)}
+        >
+          Increase Quanity
+        </button>
+        <div>Quantity: {this.props.quantity}</div>
+        <button
+          onClick={e => this.props.handleDecrementQuanity(e, this.props.id)}
+        >
+          Decrease Quanity
+        </button>
+        <button
+          onClick={e => this.props.handleDeleteFromCart(e, this.props.id)}
+        >
+          Remove from Cart
+        </button>
+      </div>
+    );
   }
 }
 
@@ -15,27 +36,32 @@ class DisplayBasketProducts extends React.Component {
 class BasketContainer extends React.Component {
   render() {
     let inBasket = this.props.products.filter(product => product.quantity > 0);
-    console.log(inBasket)
     const round = (value, decimals) => {
-      return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
+      return Number(
+        Math.round(value + "e" + decimals) + "e-" + decimals
+      ).toFixed(2);
     };
-    const basketProductList = inBasket.map(
-      (product, key = inBasket.id) => {
-        return (
-          <DisplayBasketProducts
-            title={product.title}
-            price={product.price}
-            quantity={product.quantity}
-            key={product.id}
-            id={product.id}
-          />
-        );
-      }
-    );
+    const basketProductList = inBasket.map((product, key = inBasket.id) => {
+      return (
+        <DisplayBasketProducts
+          title={product.title}
+          price={product.price}
+          quantity={product.quantity}
+          key={product.id}
+          id={product.id}
+          handleIncrementQuanity={this.props.handleIncrementQuanity}
+          handleDecrementQuanity={this.props.handleDecrementQuanity}
+          handleDeleteFromCart={this.props.handleDeleteFromCart}
+        />
+      );
+    });
     return (
       <div>
         <div>{basketProductList}</div>
         <div>Basket total is: £{round(this.props.basketTotal, 2)}</div>
+        <button onClick={() => this.props.writeCartToFile()}>
+          Produce list of cart
+        </button>
       </div>
     );
   }
@@ -103,22 +129,19 @@ class MooCheckout extends React.Component {
           id: "a",
           title: "The SlimCase",
           price: 8.99,
-          quantity: 0,
-          inBasket: false
+          quantity: 0
         },
         {
           id: "b",
           title: "Moo Hardcover Notebook",
           price: 14.99,
-          quantity: 0,
-          inBasket: false
+          quantity: 0
         },
         {
           id: "c",
           title: "Moo Softcover Journal",
           price: 5.75,
-          quantity: 0,
-          inBasket: false
+          quantity: 0
         }
       ],
       basketTotal: []
@@ -180,6 +203,42 @@ class MooCheckout extends React.Component {
       products: sortedSpreadAllOtherProducts
     });
   };
+
+  handleDeleteFromCart = (e, id) => {
+    let selectedProducts = this.state.products.find(
+      product => product.id === id
+    );
+    selectedProducts.quantity = 0;
+
+    let allOtherProducts = this.state.products.filter(
+      product => product.id !== id
+    );
+
+    let spreadAllOtherProducts = [...allOtherProducts, selectedProducts];
+
+    let sortedSpreadAllOtherProducts = spreadAllOtherProducts.sort(function(
+      a,
+      b
+    ) {
+      return a.id > b.id ? 1 : b.id > a.id ? -1 : 0;
+    });
+    this.setState({
+      products: sortedSpreadAllOtherProducts
+    });
+  };
+
+  writeCartToFile = () => {
+    let inBasket = this.state.products.filter(product => product.quantity > 0);
+    let cartContents = {
+      productsinBasket: inBasket,
+      basketTotal: this.state.basketTotal,
+      userId: "MooTest"
+    };
+
+    alert(JSON.stringify(cartContents, null, 2));
+
+    return null;
+  };
   //this is creating a new total each time, when I just wanna be able to push the values from the map into the total?
   render() {
     var basketTotal = [];
@@ -207,6 +266,10 @@ class MooCheckout extends React.Component {
         <BasketContainer
           products={this.state.products}
           basketTotal={this.state.basketTotal}
+          handleIncrementQuanity={this.handleIncrementQuanity}
+          handleDecrementQuanity={this.handleDecrementQuanity}
+          handleDeleteFromCart={this.handleDeleteFromCart}
+          writeCartToFile={this.writeCartToFile}
         />
         <BasketSum />
       </div>

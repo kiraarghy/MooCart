@@ -37,7 +37,9 @@ class BasketContainer extends React.Component {
   render() {
     let inBasket = this.props.products.filter(product => product.quantity > 0);
     const round = (value, decimals) => {
-      return Number(Math.round(value + "e" + decimals) + "e-" + decimals).toFixed(2);
+      return Number(
+        Math.round(value + "e" + decimals) + "e-" + decimals
+      ).toFixed(2);
     };
     const basketProductList = inBasket.map((product, key = inBasket.id) => {
       return (
@@ -57,6 +59,9 @@ class BasketContainer extends React.Component {
       <div>
         <div>{basketProductList}</div>
         <div>Basket total is: £{round(this.props.basketTotal, 2)}</div>
+        <button onClick={() => this.props.writeCartToFile()}>
+          Produce list of cart
+        </button>
       </div>
     );
   }
@@ -124,22 +129,19 @@ class MooCheckout extends React.Component {
           id: "a",
           title: "The SlimCase",
           price: 8.99,
-          quantity: 0,
-          inBasket: false
+          quantity: 0
         },
         {
           id: "b",
           title: "Moo Hardcover Notebook",
           price: 14.99,
-          quantity: 0,
-          inBasket: false
+          quantity: 0
         },
         {
           id: "c",
           title: "Moo Softcover Journal",
           price: 5.75,
-          quantity: 0,
-          inBasket: false
+          quantity: 0
         }
       ],
       basketTotal: []
@@ -202,11 +204,11 @@ class MooCheckout extends React.Component {
     });
   };
 
-  handleDeleteFromCart = (e,id) => {
+  handleDeleteFromCart = (e, id) => {
     let selectedProducts = this.state.products.find(
       product => product.id === id
     );
-      selectedProducts.quantity = 0;
+    selectedProducts.quantity = 0;
 
     let allOtherProducts = this.state.products.filter(
       product => product.id !== id
@@ -223,7 +225,20 @@ class MooCheckout extends React.Component {
     this.setState({
       products: sortedSpreadAllOtherProducts
     });
-  }
+  };
+
+  writeCartToFile = () => {
+    let inBasket = this.state.products.filter(product => product.quantity > 0);
+    let cartContents = {
+      productsinBasket: inBasket,
+      basketTotal: this.state.basketTotal,
+      userId: "MooTest"
+    };
+
+    alert(JSON.stringify(cartContents, null, 2));
+
+    return null;
+  };
   //this is creating a new total each time, when I just wanna be able to push the values from the map into the total?
   render() {
     var basketTotal = [];
@@ -254,6 +269,7 @@ class MooCheckout extends React.Component {
           handleIncrementQuanity={this.handleIncrementQuanity}
           handleDecrementQuanity={this.handleDecrementQuanity}
           handleDeleteFromCart={this.handleDeleteFromCart}
+          writeCartToFile={this.writeCartToFile}
         />
         <BasketSum />
       </div>

@@ -5,8 +5,8 @@ import PropTypes from "prop-types";
 //+quanity and -quantity buttons
 
 class DisplayBasketProducts extends React.Component {
-  render () {
-    return (<div> </div>)
+  render() {
+    return <div> </div>;
   }
 }
 
@@ -14,7 +14,10 @@ class DisplayBasketProducts extends React.Component {
 
 class BasketContainer extends React.Component {
   render() {
-    var basketProductList = this.props.products.map(
+    const round = (value, decimals) => {
+      return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
+    };
+    const basketProductList = this.props.products.map(
       (product, key = this.props.products.id) => {
         return (
           <DisplayBasketProducts
@@ -27,7 +30,12 @@ class BasketContainer extends React.Component {
         );
       }
     );
-    return <div>{basketProductList}</div>;
+    return (
+      <div>
+        <div>{basketProductList}</div>
+        <div>Basket total is: £{round(this.props.basketTotal, 2)}</div>
+      </div>
+    );
   }
 }
 
@@ -39,7 +47,9 @@ class DisplayProducts extends React.Component {
       <div>
         <div>{this.props.title}</div>
         <div>{this.props.price}</div>
-        <button onClick={e => this.props.handleIncrementQuanity(e, this.props.id)}>
+        <button
+          onClick={e => this.props.handleIncrementQuanity(e, this.props.id)}
+        >
           Add to Cart
         </button>
       </div>
@@ -108,7 +118,8 @@ class MooCheckout extends React.Component {
           quantity: 0,
           inBasket: false
         }
-      ]
+      ],
+      basketTotal: []
     });
   }
 
@@ -143,16 +154,59 @@ class MooCheckout extends React.Component {
   //will decrease quantity of the product
   //note it would be good if we could check the product quantity, if quantity = 0, update quantity to 0?
 
-  handleDecrementQuanity = (e, id) => {};
+  handleDecrementQuanity = (e, id) => {
+    let selectedProducts = this.state.products.find(
+      product => product.id === id
+    );
+    if (selectedProducts.quantity > 0) {
+      selectedProducts.quantity -= 1;
+    }
 
+    let allOtherProducts = this.state.products.filter(
+      product => product.id !== id
+    );
+
+    let spreadAllOtherProducts = [...allOtherProducts, selectedProducts];
+
+    let sortedSpreadAllOtherProducts = spreadAllOtherProducts.sort(function(
+      a,
+      b
+    ) {
+      return a.id > b.id ? 1 : b.id > a.id ? -1 : 0;
+    });
+    this.setState({
+      products: sortedSpreadAllOtherProducts
+    });
+  };
+  //this is creating a new total each time, when I just wanna be able to push the values from the map into the total?
   render() {
+    var basketTotal = [];
+    let sum = 0;
+
+    const BasketSum = () => {
+      this.state.products.map((product, key = this.state.products.id) => {
+        basketTotal.push(product.quantity * product.price);
+        return basketTotal;
+      });
+      sum = basketTotal.reduce((sum, value) => sum + value, 0);
+
+      if (sum !== this.state.basketTotal) {
+        this.setState({ basketTotal: sum });
+      }
+
+      return null;
+    };
     return (
       <div className="App">
         <DisplayContainer
           products={this.state.products}
           handleIncrementQuanity={this.handleIncrementQuanity}
         />
-        <BasketContainer products={this.state.products} />
+        <BasketContainer
+          products={this.state.products}
+          basketTotal={this.state.basketTotal}
+        />
+        <BasketSum />
       </div>
     );
   }

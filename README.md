@@ -14,11 +14,11 @@ This was then followed with wireframing the app, inserting logic and finally tes
 
 App follows the following tree:
 
-MooCheckout
-  |_BasketContainer
-  |  |_DisplayBasketProducts
-  |_DisplayContainer
-    |_DisplayProducts
+- MooCheckout
+  - BasketContainer
+    - DisplayBasketProducts
+  - DisplayContainer
+    - DisplayProducts
 
 Components & functions are documented to explain function.
 

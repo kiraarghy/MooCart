@@ -5,7 +5,7 @@
 I began with sketching out the design as per design requirements.
 
 Sketching out and making notes:
-![Sketching out design]( "Sketching out App Design 1")
+![Sketching out design](https://github.com/shtekhler/MooCart/blob/master/imagesReadme/IMG_20171019_164549.jpg?raw=true "Sketching out App Design 1")
 ![Sketching out design]( "Sketching out App Design 2")
 
 This was then followed with wireframing the app, inserting logic and finally testing. 

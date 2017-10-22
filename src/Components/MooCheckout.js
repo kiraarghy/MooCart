@@ -3,9 +3,6 @@ import React from "react";
 import DisplayContainer from "./DisplayContainer.js";
 import BasketContainer from "./BasketContainer.js";
 
-//DisplayBasketProducts provides a displayof the individual products as well as
-//+quantity and -quantity buttons
-
 class MooCheckout extends React.Component {
   state = {
     products: []
@@ -37,7 +34,7 @@ class MooCheckout extends React.Component {
     });
   }
 
-  //will increase quantity of the product
+  //handleIncrementQuantity will increase quantity of the product
 
   handleIncrementQuantity = (e, id) => {
     let selectedProducts = this.state.products.find(
@@ -63,10 +60,7 @@ class MooCheckout extends React.Component {
     });
   };
 
-  //will increase quantity of the product
-
-  //will decrease quantity of the product
-  //note it would be good if we could check the product quantity, if quantity = 0, update quantity to 0?
+  //handleDecrementQuantity will decrease quantity of the product
 
   handleDecrementQuantity = (e, id) => {
     let selectedProducts = this.state.products.find(
@@ -93,6 +87,8 @@ class MooCheckout extends React.Component {
     });
   };
 
+  //handleDeleteFromCart reduces product quanity down to 0
+
   handleDeleteFromCart = (e, id) => {
     let selectedProducts = this.state.products.find(
       product => product.id === id
@@ -116,6 +112,8 @@ class MooCheckout extends React.Component {
     });
   };
 
+  //In production, this would be sent as an API call rather than as an alert
+
   writeCartToFile = () => {
     let inBasket = this.state.products.filter(product => product.quantity > 0);
     let cartContents = {
@@ -129,16 +127,18 @@ class MooCheckout extends React.Component {
     return null;
   };
 
+  //Returns total of all products in basket
+
   getBasketTotal = () => {
     let sum = 0;
-    let tempBasketTotal = this.state.products.map((product) => {
-      return (product.quantity * product.price);
+    let tempBasketTotal = this.state.products.map(product => {
+      return product.quantity * product.price;
     });
     sum = tempBasketTotal.reduce((sum, value) => sum + value, 0);
 
     return sum;
   };
-  //this is creating a new total each time, when I just wanna be able to push the values from the map into the total?
+
   render() {
     return (
       <div className="App">

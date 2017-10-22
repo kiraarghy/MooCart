@@ -1,28 +1,31 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-//DisplayBasketProducts provides a displayof the individual products as well as
-//+quantity and -quantity buttons
+//DisplayBasketProducts provides a display of the individual products as well as
+//Increase Quantity, Decrease Quantity & Remove from Cart buttons
 
 class DisplayBasketProducts extends React.Component {
   render() {
     return (
-      <div>
+      <div className = "displayBasketProducts">
         <div>{this.props.title}</div>
         <div>Cost: £{this.props.price}</div>
         <button
           onClick={e => this.props.handleIncrementQuantity(e, this.props.id)}
+          className= "increaseQuantity"
         >
           Increase Quantity
         </button>
-        <div>Quantity: {this.props.quantity}</div>
+        <div className= "basketProductQuantity">Quantity: {this.props.quantity}</div>
         <button
           onClick={e => this.props.handleDecrementQuantity(e, this.props.id)}
+          className ="decrementQuantity"
         >
           Decrease Quantity
         </button>
         <button
           onClick={e => this.props.handleDeleteFromCart(e, this.props.id)}
+          className="removeFromCart"
         >
           Remove from Cart
         </button>

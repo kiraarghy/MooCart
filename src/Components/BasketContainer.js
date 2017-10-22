@@ -30,7 +30,7 @@ class BasketContainer extends React.Component {
     return (
       <div>
         <div>{basketProductList}</div>
-        <div>Basket total is: £{round(this.props.basketTotal, 2)}</div>
+        <div className = "basketTotal">Basket total is: £{round(this.props.basketTotal, 2)}</div>
         <button onClick={() => this.props.writeCartToFile()}>
           Produce list of cart
         </button>

@@ -1,6 +1,6 @@
 # MooCart - For Moo codetest. 
 
-##Design process
+## Design process
 
 I began with sketching out the design as per design requirements.
 
@@ -10,7 +10,7 @@ Sketching out and making notes:
 
 This was then followed with wireframing the app, inserting logic and finally testing. 
 
-###Structure
+### Structure
 
 App follows the following tree:
 
@@ -22,7 +22,7 @@ MooCheckout
 
 Components & functions are documented to explain function.
 
-####Testing
+#### Testing
 
 Tests using Jest and Enzyme and testing basic functionality of app. 
 
